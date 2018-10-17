@@ -1,3 +1,8 @@
+import os
+
+import config
+
+
 def split_writing_and_other_stuff(csv_line):
     return csv_line.split(field_separator, 1)
 
@@ -34,13 +39,16 @@ def get_user_to_choose_ending(possible_endings):
     return possible_endings[ending_to_save_number]
 
 
+def open_csv_file():
+    home_directory_path = os.path.expanduser("~")
+    file_path = os.path.join(home_directory_path, config.CSV_FILE_PATH)
+    file = open(file_path, "r+")
+    return file
+
+
 field_separator = ";"
-lines = ["虚空;こくう;pusta przestrzeń, puste niebo;",
-         "既存;きそん;istnienie, egzystowanie, bytowanie;",
-         "虚空;こくう;pusta przestrzeń;",
-         "帰す;きす;zbliżać się do (końca), kończyć się, przypisywać;",
-         "銀河;ぎんが;Droga Mleczna;",
-         "銀河;ぎんが;galaktyka;"]
+file = open_csv_file()
+lines = [line for line in file]
 
 words = build_words_dictionary(lines)
 
@@ -53,5 +61,7 @@ words = build_words_dictionary(lines)
 remove_excess_endings(words)
 
 for word in words:
-    print(word)
-    print(words[word])
+    print(word+words[word])
+
+
+file.close()
