@@ -25,11 +25,14 @@ def remove_excess_endings(words_dictionary):
 
 
 def handle_endings(possible_endings):
-    if len(possible_endings) == 1:
+    if len(possible_endings) == 1 or endings_are_identical(possible_endings):
         return possible_endings.pop()
     else:
         user_chosen_ending = get_user_to_choose_ending(possible_endings)
         return user_chosen_ending
+
+def endings_are_identical(endings):
+    return endings[1:] == endings[:-1]
 
 
 def get_user_to_choose_ending(possible_endings):
@@ -39,29 +42,39 @@ def get_user_to_choose_ending(possible_endings):
     return possible_endings[ending_to_save_number]
 
 
-def open_csv_file():
+def open_csv_file(mode):
     home_directory_path = os.path.expanduser("~")
     file_path = os.path.join(home_directory_path, config.CSV_FILE_PATH)
-    file = open(file_path, "r+")
+    file = open(file_path, mode)
     return file
 
 
-field_separator = ";"
-file = open_csv_file()
-lines = [line for line in file]
+def open_csv_file_for_reading():
+    return open_csv_file("r")
 
+
+def open_csv_file_for_writing():
+    return open_csv_file("w")
+
+
+def get_lines_from_file():
+    file = open_csv_file_for_reading()
+    lines = [line for line in file]
+    file.close()
+    return lines
+
+
+def write_words_to_file(words_dictionary):
+    file = open_csv_file_for_writing()
+    for word in words_dictionary:
+        file.write(word + config.FIELD_SEPARATOR + words_dictionary[word])
+    file.close()
+
+
+field_separator = config.FIELD_SEPARATOR
+lines = get_lines_from_file()
 words = build_words_dictionary(lines)
-
-# for word in words:
-#     print(word)
-#     endings = words[word]
-#     for ending in endings:
-#         print(ending)
 
 remove_excess_endings(words)
 
-for word in words:
-    print(word+words[word])
-
-
-file.close()
+write_words_to_file(words)
