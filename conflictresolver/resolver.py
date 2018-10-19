@@ -21,21 +21,24 @@ def build_words_dictionary(csv_lines):
 
 def remove_excess_endings(words_dictionary):
     for word in words_dictionary:
-        words_dictionary[word] = handle_endings(words_dictionary[word])
+        words_dictionary[word] = handle_endings(words_dictionary[word], word)
 
 
-def handle_endings(possible_endings):
+def handle_endings(possible_endings, word):
     if len(possible_endings) == 1 or endings_are_identical(possible_endings):
         return possible_endings.pop()
     else:
-        user_chosen_ending = get_user_to_choose_ending(possible_endings)
+        user_chosen_ending = get_user_to_choose_ending(possible_endings, word)
         return user_chosen_ending
 
+
+# some sorcery I copy-pasted from stack
 def endings_are_identical(endings):
     return endings[1:] == endings[:-1]
 
 
-def get_user_to_choose_ending(possible_endings):
+def get_user_to_choose_ending(possible_endings, word):
+    print("Dla słowa: " + word)
     for i in range(len(possible_endings)):
         print("{:2}: {}".format(i + 1, possible_endings[i]))
     ending_to_save_number = int(input("Podaj numer zakończenia do zostawienia: ")) - 1
